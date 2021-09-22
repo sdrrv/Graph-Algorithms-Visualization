@@ -1,18 +1,25 @@
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    noCursor();
+    //noCursor();
+    print(windowHeight);
 }
 
 function draw() {
     background(220);
-    fill(0);
-    circle(windowWidth / 2, windowHeight / 2, 50);
-    fill(color(250, 0, 0));
-    noStroke();
-    circle(mouseX, mouseY, 10);
-    //rect(30, 20, 55, 55, 20);
+    createGrid(50);
+
 }
 
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
+}
+
+function createGrid(zoom) {
+    for (var i = 10; i < width; i += zoom) {
+
+        for (var j = 10; j < height; j += zoom) {
+            circle(i, j, 3);
+        }
+
+    }
 }
