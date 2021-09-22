@@ -1,0 +1,23 @@
+node_modules
+/example/out
+/test/trash
+*.log
+logs
+npm-debug.log*
+.eslintcache
+/coverage
+/dist
+/local
+/reports
+/node_modules
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+*.sublime-project
+*.sublime-workspace
+package-lock.json
+package.json
+
+#Demo files
+test.js
