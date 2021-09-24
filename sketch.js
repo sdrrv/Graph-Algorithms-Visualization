@@ -1,38 +1,62 @@
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    shadow(2, 2);
     zoom = 50;
     grid = [];
-    vertices = [];
+    vertices = {};
+    count = 0;
+    selectedVertice = null;
 }
 
 function draw() {
     background(200);
     drawGrid(zoom, 8);
+    drawConnections();
     drawVertices();
 }
 
+function drawConnections() {
+    for (var key in vertices) {
+        var vertice = vertices[key];
+        var connections = vertice.getConnections();
+        for (var connectionKey in connections) {
+            var connector = connections[connectionKey];
+            shadow(2, 2);
+            stroke(2);
+            line(vertice.x, vertice.y, connector.x, connector.y);
+        }
+    }
+}
 
 function drawVertices() {
-    for (var i = 0; i < vertices.length; i++) {
-        vertice = vertices[i];
+    for (var key in vertices) {
+        var vertice = vertices[key];
 
-        if (vertices.length > 1 && i != vertices.length - 1) { // Connector Line
-            stroke(2);
-            line(vertice.x, vertice.y, vertices[i + 1].x, vertices[i + 1].y);
-        }
-
-        if (dist(vertice.x, vertice.y, mouseX, mouseY) <= zoom * 0.8) {
-
-            fill(255);
+        if (vertice.selected) { // selected
+            shadow(3, 3);
+            fill(color(55, 105, 0));
             noStroke();
-            circle(vertice.x, vertice.y, zoom * 0.7);
-
+            circle(vertice.x, vertice.y, zoom * 0.8);
+            //-------Hover Text--------
+            shadow(0, 0);
             fill(0);
             textSize(22);
             textAlign(CENTER, CENTER);
-            text(vertice.id, vertice.x, vertice.y);
-        } else {
+            textFont('Georgia');
+            text(vertice.getId(), vertice.x, vertice.y);
+        } else if (dist(vertice.x, vertice.y, mouseX, mouseY) <= zoom * 0.8) { // Hover
+            shadow(3, 3);
+            fill(255);
+            noStroke();
+            circle(vertice.x, vertice.y, zoom * 0.8);
+            //-------Hover Text--------
+            shadow(0, 0);
+            fill(0);
+            textSize(22);
+            textAlign(CENTER, CENTER);
+            textFont('Georgia');
+            text(vertice.getId(), vertice.x, vertice.y);
+        } else { // Iddle
+            shadow(3, 3);
             fill(230);
             noStroke();
             circle(vertice.x, vertice.y, zoom * 0.7);
@@ -41,6 +65,7 @@ function drawVertices() {
 }
 
 function drawGrid(zoom, maxSize) {
+    shadow(3, 3);
     grid = [];
     for (var i = 10; i < width; i += zoom) {
         for (var j = 10; j < height; j += zoom) {
@@ -72,19 +97,38 @@ function shadow(xoff, yoff) {
 }
 
 function mousePressed() {
-    print("Click");
     for (var i = 0; i < grid.length; i++) {
-        if ((dist(grid[i][0], grid[i][1], mouseX, mouseY) <= grid[i][2] * 1.05) && checkForVertice(grid[i][0], grid[i][1])) {
-            print("Hit");
-            vertices.push(new Vertice(grid[i][0], grid[i][1], vertices.length));
+        if ((dist(grid[i][0], grid[i][1], mouseX, mouseY) <= grid[i][2] * 1.05)) {
+            var vertice = getVertice(grid[i][0], grid[i][1]);
+            if (vertice == null) { // does not exist
+                vertices[count] = new Vertice(grid[i][0], grid[i][1], count);
+                count++;
+            } else { // exists
+                if (!vertice.selected) { // Was not selected
+                    if (selectedVertice != null) { // Add to connectors
+                        selectedVertice.addConnector(vertice);
+                    } else { // None was selected
+                        vertice.select();
+                        selectedVertice = vertice;
+                    }
+                } else { // was selected
+                    selectedVertice.deselect();
+                    selectedVertice = null;
+                }
+            }
         }
     }
 }
 
-function checkForVertice(X, Y) {
-    for (var i = 0; i < vertices.length; i++) {
-        if (vertices[i].x == X && vertices[i].y == Y)
-            return false;
+function getVertice(X, Y) {
+    for (var key in vertices) {
+        var vertice = vertices[key];
+        if (vertice.x == X && vertice.y == Y)
+            return vertice;
     }
-    return true;
+    return null;
+}
+
+function getDicKeys(Dic) {
+    return Object.keys(Dic);
 }
