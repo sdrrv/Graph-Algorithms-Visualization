@@ -3,7 +3,8 @@ function setup() {
     shadow(2, 2);
     zoom = 50;
     grid = [];
-    vertices = [];
+    vertices = {};
+    count = 0;
 }
 
 function draw() {
@@ -14,25 +15,28 @@ function draw() {
 
 
 function drawVertices() {
-    for (var i = 0; i < vertices.length; i++) {
-        vertice = vertices[i];
-
-        if (vertices.length > 1 && i != vertices.length - 1) { // Connector Line
+    for (let key in vertices) {
+        vertice = vertices[key];
+        /*if (count > 1 && i != count - 1) { // Connector Line
+            shadow(2, 2);
             stroke(2);
-            line(vertice.x, vertice.y, vertices[i + 1].x, vertices[i + 1].y);
-        }
+            //line(vertice.x, vertice.y, vertices[i + 1].x, vertices[i + 1].y);
+        }*/
 
-        if (dist(vertice.x, vertice.y, mouseX, mouseY) <= zoom * 0.8) {
-
+        if (dist(vertice.x, vertice.y, mouseX, mouseY) <= zoom * 0.8 || vertice.selected) { // Hover
+            shadow(3, 3);
             fill(255);
             noStroke();
             circle(vertice.x, vertice.y, zoom * 0.7);
-
+            //-------Hover Text--------
+            shadow(0, 0);
             fill(0);
             textSize(22);
             textAlign(CENTER, CENTER);
-            text(vertice.id, vertice.x, vertice.y);
+            textFont('Georgia');
+            text(vertice.getId(), vertice.x, vertice.y);
         } else {
+            shadow(3, 3);
             fill(230);
             noStroke();
             circle(vertice.x, vertice.y, zoom * 0.7);
@@ -41,6 +45,7 @@ function drawVertices() {
 }
 
 function drawGrid(zoom, maxSize) {
+    shadow(3, 3);
     grid = [];
     for (var i = 10; i < width; i += zoom) {
         for (var j = 10; j < height; j += zoom) {
@@ -72,11 +77,14 @@ function shadow(xoff, yoff) {
 }
 
 function mousePressed() {
-    print("Click");
     for (var i = 0; i < grid.length; i++) {
-        if ((dist(grid[i][0], grid[i][1], mouseX, mouseY) <= grid[i][2] * 1.05) && checkForVertice(grid[i][0], grid[i][1])) {
-            print("Hit");
-            vertices.push(new Vertice(grid[i][0], grid[i][1], vertices.length));
+        if ((dist(grid[i][0], grid[i][1], mouseX, mouseY) <= grid[i][2] * 1.05)) {
+            if (checkForVertice(grid[i][0], grid[i][1])) { // does not exist
+                vertices[count] = new Vertice(grid[i][0], grid[i][1], count);
+                count++;
+            } else { // exists
+                print("Hello");
+            }
         }
     }
 }
@@ -87,4 +95,8 @@ function checkForVertice(X, Y) {
             return false;
     }
     return true;
+}
+
+function getDicKeys(Dic) {
+    return Object.keys(Dic);
 }

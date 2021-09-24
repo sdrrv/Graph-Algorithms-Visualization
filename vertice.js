@@ -3,6 +3,18 @@ class Vertice {
         this.x = X;
         this.y = Y;
         this.id = ID;
-        this.textDisplayed = false;
+        this.selected = false;
+    }
+
+    getId() {
+        return this.id;
+    }
+
+    select() {
+        this.selected = true;
+    }
+
+    deselect() {
+        this.selected = false;
     }
 }
