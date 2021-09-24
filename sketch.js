@@ -22,6 +22,7 @@ function drawConnections() {
             var connector = connections[connectionKey];
             shadow(2, 2);
             stroke(2);
+            strokeWeight(1);
             line(vertice.x, vertice.y, connector.x, connector.y);
         }
     }
@@ -33,14 +34,16 @@ function drawVertices() {
 
         if (vertice.selected) { // selected
             shadow(3, 3);
-            fill(color(55, 105, 0));
-            noStroke();
+            fill(250);
+            stroke(55, 105, 0);
+            strokeWeight(4);
             circle(vertice.x, vertice.y, zoom * 0.8);
             //-------Hover Text--------
             shadow(0, 0);
-            fill(0);
+            fill(color(55, 105, 0));
             textSize(22);
             textAlign(CENTER, CENTER);
+            strokeWeight(1);
             textFont('Georgia');
             text(vertice.getId(), vertice.x, vertice.y);
         } else if (dist(vertice.x, vertice.y, mouseX, mouseY) <= zoom * 0.8) { // Hover
@@ -98,7 +101,7 @@ function shadow(xoff, yoff) {
 
 function mousePressed() {
     for (var i = 0; i < grid.length; i++) {
-        if ((dist(grid[i][0], grid[i][1], mouseX, mouseY) <= grid[i][2] * 1.05)) {
+        if (dist(grid[i][0], grid[i][1], mouseX, mouseY) <= grid[i][2] * 1.15) {
             var vertice = getVertice(grid[i][0], grid[i][1]);
             if (vertice == null) { // does not exist
                 vertices[count] = new Vertice(grid[i][0], grid[i][1], count);
