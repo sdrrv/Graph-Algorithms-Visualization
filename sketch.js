@@ -1,6 +1,5 @@
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    shadow(2, 2);
     zoom = 50;
     grid = [];
     vertices = {};
@@ -11,21 +10,27 @@ function setup() {
 function draw() {
     background(200);
     drawGrid(zoom, 8);
+    drawConnections();
     drawVertices();
 }
 
-
-function drawVertices() {
-    for (let key in vertices) {
+function drawConnections() {
+    for (var key in vertices) {
         var vertice = vertices[key];
         var connections = vertice.getConnections();
-
-        for (let connectionKey in connections) {
+        for (var connectionKey in connections) {
             var connector = connections[connectionKey];
             shadow(2, 2);
             stroke(2);
             line(vertice.x, vertice.y, connector.x, connector.y);
         }
+    }
+}
+
+function drawVertices() {
+    for (var key in vertices) {
+        var vertice = vertices[key];
+
         if (vertice.selected) { // selected
             shadow(3, 3);
             fill(color(55, 105, 0));
@@ -50,7 +55,7 @@ function drawVertices() {
             textAlign(CENTER, CENTER);
             textFont('Georgia');
             text(vertice.getId(), vertice.x, vertice.y);
-        } else {
+        } else { // Iddle
             shadow(3, 3);
             fill(230);
             noStroke();
@@ -99,13 +104,14 @@ function mousePressed() {
                 vertices[count] = new Vertice(grid[i][0], grid[i][1], count);
                 count++;
             } else { // exists
-                if (!vertice.selected) {
-                    vertice.select();
-                    if (selectedVertice != null) {
-                        selectedVertice.deselect();
+                if (!vertice.selected) { // Was not selected
+                    if (selectedVertice != null) { // Add to connectors
+                        selectedVertice.addConnector(vertice);
+                    } else { // None was selected
+                        vertice.select();
+                        selectedVertice = vertice;
                     }
-                    selectedVertice = vertice;
-                } else {
+                } else { // was selected
                     selectedVertice.deselect();
                     selectedVertice = null;
                 }
@@ -115,7 +121,7 @@ function mousePressed() {
 }
 
 function getVertice(X, Y) {
-    for (let key in vertices) {
+    for (var key in vertices) {
         var vertice = vertices[key];
         if (vertice.x == X && vertice.y == Y)
             return vertice;
