@@ -1,10 +1,13 @@
 function setup() {
     createCanvas(windowWidth, windowHeight);
+    textFont('Georgia');
+    textAlign(CENTER, CENTER);
     zoom = 50;
     grid = [];
     vertices = {};
     count = 0;
     selectedVertice = null;
+    connections = []; // to Populate
 }
 
 function draw() {
@@ -38,7 +41,7 @@ function drawVertices() {
             stroke(55, 105, 0);
             strokeWeight(4);
             circle(vertice.x, vertice.y, zoom * 0.8);
-            //-------Hover Text--------
+            //-------Text--------
             shadow(0, 0);
             fill(color(55, 105, 0));
             textSize(22);
@@ -55,8 +58,6 @@ function drawVertices() {
             shadow(0, 0);
             fill(0);
             textSize(22);
-            textAlign(CENTER, CENTER);
-            textFont('Georgia');
             text(vertice.getId(), vertice.x, vertice.y);
         } else { // Iddle
             shadow(3, 3);
@@ -130,8 +131,4 @@ function getVertice(X, Y) {
             return vertice;
     }
     return null;
-}
-
-function getDicKeys(Dic) {
-    return Object.keys(Dic);
 }
