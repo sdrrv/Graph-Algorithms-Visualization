@@ -12,4 +12,12 @@ class Connection {
     setValue(newValue) {
         this.value = newValue;
     }
+
+    getVertice1() {
+        return this._vertice1;
+    }
+
+    getVertice2() {
+        return this._vertice2;
+    }
 }

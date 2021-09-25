@@ -2,12 +2,16 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
     textFont('Georgia');
     textAlign(CENTER, CENTER);
+    //-------------------------------------
     zoom = 50;
     grid = [];
     vertices = {};
     count = 0;
     selectedVertice = null;
-    connections = []; // to Populate
+    connections = []; // Contains all the connections
+    //-------------------------------------
+    unidirectional = true;
+    //-------------------------------------
 }
 
 function draw() {
@@ -18,16 +22,15 @@ function draw() {
 }
 
 function drawConnections() {
-    for (var key in vertices) {
-        var vertice = vertices[key];
-        var connections = vertice.getConnections();
-        for (var connectionKey in connections) {
-            var connector = connections[connectionKey];
-            shadow(2, 2);
-            stroke(2);
-            strokeWeight(1);
-            line(vertice.x, vertice.y, connector.x, connector.y);
-        }
+    for (var connectionIndex in connections) {
+        var connection = connections[connectionIndex];
+
+        var vertice1 = connection.getVertice1();
+        var vertice2 = connection.getVertice2();
+        shadow(2, 2);
+        stroke(2);
+        strokeWeight(1);
+        line(vertice1.x, vertice1.y, vertice2.x, vertice2.y);
     }
 }
 
@@ -110,7 +113,11 @@ function mousePressed() {
             } else { // exists
                 if (!vertice.selected) { // Was not selected
                     if (selectedVertice != null) { // Add to connectors
+                        createConnection(selectedVertice, vertice, 1);
                         selectedVertice.addConnector(vertice);
+                        if (!unidirectional) {
+                            vertice.addConnector(selectedVertice);
+                        }
                     } else { // None was selected
                         vertice.select();
                         selectedVertice = vertice;
@@ -131,4 +138,8 @@ function getVertice(X, Y) {
             return vertice;
     }
     return null;
+}
+
+function createConnection(Vertice1, Vertice2, Value) {
+    connections.push(new Connection(Vertice1, Vertice2, Value));
 }
