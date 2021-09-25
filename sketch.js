@@ -2,6 +2,7 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
     textFont('Georgia');
     textAlign(CENTER, CENTER);
+    frameRate(60);
     //-------------------------------------
     zoom = 50;
     grid = [];
@@ -12,13 +13,38 @@ function setup() {
     //-------------------------------------
     unidirectional = true;
     //-------------------------------------
+    createGrid();
 }
+
 
 function draw() {
     background(200);
     drawGrid(zoom, 8);
+    drawFPS();
     drawConnections();
     drawVertices();
+}
+
+function createGrid() {
+    for (var i = 10; i < width; i += zoom) {
+        for (var j = 10; j < height; j += zoom) {
+            grid.push([i, j, zoom * 0.2]);
+        }
+    }
+}
+
+function windowResized() {
+    resizeCanvas(windowWidth, windowHeight);
+}
+
+function drawFPS() {
+    /*shadow(0, 0);
+    textSize(15);
+    var fps = frameRate();
+    fill(0);
+    stroke(0);
+    text("FPS: " + fps.toFixed(2), width * 0.97, height * 0.98); */
+    print(frameRate());
 }
 
 function drawConnections() {
@@ -31,6 +57,11 @@ function drawConnections() {
         stroke(2);
         strokeWeight(1);
         line(vertice1.x, vertice1.y, vertice2.x, vertice2.y);
+        //--------------Text--------------------
+        shadow(0, 0);
+        var textPos = getLineMiddle(vertice1, vertice2);
+        //text(connection.getValue(), textPos[0], textPos[1]);
+
     }
 }
 
@@ -73,15 +104,12 @@ function drawVertices() {
 
 function drawGrid(zoom, maxSize) {
     shadow(3, 3);
-    grid = [];
-    for (var i = 10; i < width; i += zoom) {
-        for (var j = 10; j < height; j += zoom) {
-            var toGrow = getSizeToGrow(i, j, maxSize);
-            noStroke();
-            fill(color(0, 0, 0, 80));
-            circle(i, j, zoom * 0.06 + toGrow);
-            grid.push([i, j, zoom * 0.06 + toGrow]);
-        }
+    for (var gridIndex in grid) {
+        var point = grid[gridIndex];
+        var toGrow = getSizeToGrow(point[0], point[1], maxSize);
+        noStroke();
+        fill(color(0, 0, 0, 80));
+        circle(point[0], point[1], zoom * 0.06 + toGrow);
     }
 }
 
@@ -142,4 +170,14 @@ function getVertice(X, Y) {
 
 function createConnection(Vertice1, Vertice2, Value) {
     connections.push(new Connection(Vertice1, Vertice2, Value));
+}
+
+function getLineMiddle(Vertice1, Vertice2) {
+    var p1 = [Vertice1.x, Vertice1.y];
+    var p2 = [Vertice2.x, Vertice2.y];
+
+    var m = (p2[1] - p1[1]) / (p2[0] - p1[0]);
+    var x = (p2[0] + p1[0]) / 2;
+    var y = m * x - m * p1[0] + p1[1];
+    return [x, y];
 }
