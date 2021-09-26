@@ -57,11 +57,20 @@ function drawConnections() {
         stroke(2);
         strokeWeight(1);
         line(vertice1.x, vertice1.y, vertice2.x, vertice2.y);
-        //--------------Text--------------------
-        shadow(0, 0);
-        var textPos = getLineMiddle(vertice1, vertice2);
-        //text(connection.getValue(), textPos[0], textPos[1]);
+    }
+}
 
+function drawConnectionsText(vertice, offset) {
+    var connections = vertice.getConnections();
+    for (var connectionKey in connections) {
+        var connection = connections[connectionKey];
+        shadow(3, 3);
+        //fill(color(178, 34, 34));
+        fill(color(55, 105, 0));
+        stroke(2);
+        textSize(30);
+        var textPos = getLineMiddle(connection.getVertice1(), connection.getVertice2());
+        text(connection.getValue(), textPos[0] * (1 + offset), textPos[1] * (1 + offset));
     }
 }
 
@@ -93,6 +102,7 @@ function drawVertices() {
             fill(0);
             textSize(22);
             text(vertice.getId(), vertice.x, vertice.y);
+            drawConnectionsText(vertice, 0.005);
         } else { // Iddle
             shadow(3, 3);
             fill(230);
@@ -141,10 +151,10 @@ function mousePressed() {
             } else { // exists
                 if (!vertice.selected) { // Was not selected
                     if (selectedVertice != null) { // Add to connectors
-                        createConnection(selectedVertice, vertice, 1);
-                        selectedVertice.addConnector(vertice);
+                        var newConnection = createConnection(selectedVertice, vertice, 1);
+                        selectedVertice.addConnector(newConnection);
                         if (!unidirectional) {
-                            vertice.addConnector(selectedVertice);
+                            vertice.addConnector(newConnection);
                         }
                     } else { // None was selected
                         vertice.select();
@@ -169,7 +179,9 @@ function getVertice(X, Y) {
 }
 
 function createConnection(Vertice1, Vertice2, Value) {
-    connections.push(new Connection(Vertice1, Vertice2, Value));
+    var connection = new Connection(Vertice1, Vertice2, Value);
+    connections.push(connection);
+    return connection;
 }
 
 function getLineMiddle(Vertice1, Vertice2) {

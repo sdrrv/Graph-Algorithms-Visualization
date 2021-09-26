@@ -19,8 +19,12 @@ class Vertice {
         this.selected = false;
     }
 
-    addConnector(vertice) {
-        this.connections[vertice.getId()] = vertice;
+    addConnector(connection) {
+        if (connection.getVertice1().getId() == this.id) {
+            this.connections[connection.getVertice2().getId()] = connection;
+        } else {
+            this.connections[connection.getVertice1().getId()] = connection;
+        }
     }
 
     getConnections() {
